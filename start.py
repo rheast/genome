@@ -32,35 +32,33 @@ class retrovirus:
     def runCodonMatch(self):
         rheast.writeData(self.run+'data.dat',[],'w')
         figure = pyplot.figure(figsize=(32,6))
+        hunt = 3
 
         image = {
-            'color': ['#ee6677', '#ffdd00', '#3399ff', '#00c800', '#333333'],
+            'color': ['#ee6677', '#ffdd00', '#3399ff', '#00c800'],
             'shape': ['s', 'o'],
-            'size': [9, 6, 3, 0, 0],
+            'size': [9, 6, 3, 0],
         }
 
         data = {
             'HTLV': {
-                'NC_001436': { 'type': 'HTLV1', 'bind': [406, 423], 'seq': '', 'codon': ''},
-                'NC_001488': { 'type': 'HTLV2', 'bind': [766, 783], 'seq': '', 'codon': ''},
-                'NC_000858': {'type': 'STLV1', 'bind': [758, 775], 'seq': '', 'codon': ''},
-                'NC_001815': { 'type': 'STLV2', 'bind': [715, 732], 'seq': '', 'codon': ''},
+                'NC_001436': { 'type': 'HTLV1', 'bind': [406, 423]},
+                'NC_001488': { 'type': 'HTLV2', 'bind': [766, 783]},
+                'NC_000858': {'type': 'STLV1', 'bind': [758, 775]},
+                'NC_001815': { 'type': 'STLV2', 'bind': [715, 732]},
             },
             'HIV': {
-                'NC_001802': {'type': 'HIV1', 'bind': [182, 199], 'seq': '', 'codon': ''},
-                'NC_001722': {'type': 'HIV2', 'bind': [859, 876], 'seq': '', 'codon': ''},
-                'NC_001549': {'type': 'SIV', 'bind': [689, 706], 'seq': '', 'codon': ''},
-                'NC_001482': {'type': 'FIV', 'bind': [358, 375], 'seq': '', 'codon': ''},
+                'NC_001802': {'type': 'HIV1', 'bind': [182, 199]},
+                'NC_001722': {'type': 'HIV2', 'bind': [859, 876]},
+                'NC_001549': {'type': 'SIV', 'bind': [689, 706]},
+                'NC_001482': {'type': 'FIV', 'bind': [358, 375]},
             },
         }
 
-        hunt = 3
-        extend = 0
-
         for n, d in enumerate(data):
-            bidden = []
-            number = {}
             title = []
+            number = {}
+            bidden = []
 
             for nc in data[d]:
                 sequence = rheast.getPathList(self.seq,nc)
@@ -73,12 +71,10 @@ class retrovirus:
                     protein = rheast.getCodonPotential(sequence,8)
                 
                 data[d][nc]['type'] = nc + '   ' + data[d][nc]['type']
-                match = sequence[data[d][nc]['bind'][0]-1-extend:data[d][nc]['bind'][1]+extend]
-                #rheast.writeData(self.run+'data.dat',['>'+nc,sequence,match]+protein+[''])
+                match = sequence[data[d][nc]['bind'][0]-1:data[d][nc]['bind'][1]]
                 
                 robot = rheast.getCodonExtract(hunt,match,protein,sequence,data[d][nc])
                 rheast.writeData(self.run+'data.dat',['>'+nc,match,'\n\n'])
-                #break
                 
                 title.append(nc + rheast.none[' '][0:3] + data[d][nc]['type'])
                 bidden.append(robot)
@@ -139,7 +135,7 @@ class retrovirus:
 
         array = {
             'x': [500, 10000],
-            'y': [2, 10+extend*2],
+            'y': [2, 10],
         }
         array = rheast.getCodonAxis(array)
         gca = pyplot.gca()

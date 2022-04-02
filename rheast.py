@@ -933,20 +933,13 @@ class RHEast:
     def getCodonExtract(self,hunt,match,protein,sequence,data):
         text = match
         robot = []
-
-        if data['seq']:
-            text = self.none['.'][0:3*hunt-len(data['seq'])] + data['seq']
-            text = re.findall(text,match)[0]
         
         for i in range(len(text)-3*hunt+1):
             txt = text[i:i+3*hunt]
             i = self.getSeqPosition(txt,match)[0]
-            print(i,txt)
 
             for x in [1,-1]:
                 for y in [1,-1]:
-                    #if x != -1 or y != -1 or i != 1:
-                        #continue
 
                     seq = self.getArrayPackage(txt,3)[::x]
                     for h in range(hunt):
@@ -954,9 +947,6 @@ class RHEast:
 
                     seq = self.getCodonTranslate(seq)
                     if re.findall('#',seq):
-                        continue
-
-                    if data['codon'] and not re.findall(data['codon'],seq):
                         continue
 
                     for pro in protein:
