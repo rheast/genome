@@ -1,6 +1,6 @@
 H = {'Gag','Pol','Env'}
 I = {'ENSE00003838363','ENSE00001316091'}
-A = {'androgen','androgen receptor'}
+A = "Androgen"
 def f(x):
     if x == A:
         return I | H
