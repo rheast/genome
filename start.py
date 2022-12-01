@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 #pip install matplotlib
+from rheast import rheast
 import matplotlib.pyplot as pyplot
 pyplot.rcParams['font.sans-serif'] = 'Times New Roman'
-from rheast import rheast
 
 class retrovirus:
     def __init__(self,*index):
