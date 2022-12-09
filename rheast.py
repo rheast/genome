@@ -1,8 +1,6 @@
 #!/usr/bin/python3
-import json,math,re,os
-from concurrent.futures import ProcessPoolExecutor
-from multiprocessing import cpu_count
-from operator import itemgetter, attrgetter
+from operator import itemgetter
+import re,os
 
 class RHEast:
     """ ARRAY """
@@ -296,48 +294,6 @@ class RHEast:
 
         path.close()
         return
-    #Complete
-
-    def printPercent(self,index,number,percent,*text):
-        if text:
-            text = text[0]
-        else:
-            text = ''
-        
-        centum = int(100*index/number)
-        if centum > percent:
-            percent = centum
-            print(text,str(percent)+'%')
-        
-        return percent
-    #Complete
-
-    def runProcess(self,array,program):
-        process = ProcessPoolExecutor()
-        for arr in array:
-            run = process.submit(program,arr)
-        process.shutdown(wait=True)
-        return
-    #Complete
-
-    def getProcess(self,program,parameter):
-        project = []
-        process = ProcessPoolExecutor(cpu_count())
-
-        for i in range(cpu_count()):
-            parameter['process'] = i
-            run = process.submit(program,**parameter)
-            project.append(run)
-            #print(i,run)
-        
-        process.shutdown(wait=True)
-
-        array = []
-        for pro in project:
-            array += pro.result()
-        
-        print(len(array))
-        return array
     #Complete
 
     """ SEQUENCE """
@@ -1007,7 +963,7 @@ class RHEast:
         return robot
     #Complete
 
-    def getNum1(self,number):
+    def getOne(self,number):
         if number > 0:
             number = 1
         else:

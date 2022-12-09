@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 #pip install beautifulsoup4
-import json,math,re,os
 from concurrent.futures import ProcessPoolExecutor
 from urllib.request import urlopen, urlretrieve
 from bs4 import BeautifulSoup
+import os
 
 path = os.path.split(os.path.realpath(__file__))[0]+'\\seq\\'
 if not os.path.exists(path):

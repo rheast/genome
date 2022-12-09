@@ -2,7 +2,6 @@
 #pip install matplotlib
 from rheast import rheast
 import matplotlib.pyplot as pyplot
-pyplot.rcParams['font.sans-serif'] = 'Times New Roman'
 
 class retrovirus:
     def __init__(self,*index):
@@ -30,7 +29,9 @@ class retrovirus:
 
     def runCodonMatch(self):
         rheast.writeData(self.run+'data.dat',[],'w')
+        pyplot.rcParams['font.sans-serif'] = 'Times New Roman'
         figure = pyplot.figure(figsize=(32,6))
+
         hunt = 3
 
         image = {
@@ -86,7 +87,7 @@ class retrovirus:
                                 number[i*y][x] = []
 
                 for rob in robot:
-                    x = rheast.getNum1(rob['x'])
+                    x = rheast.getOne(rob['x'])
                     y = rob['y']
                     number[y][x].append(nc)
 
@@ -105,7 +106,7 @@ class retrovirus:
                 }
 
                 for r, rob in enumerate(robot):
-                    x = rheast.getNum1(rob['x'])
+                    x = rheast.getOne(rob['x'])
                     y = rob['y']
 
                     if number[y][x]:
@@ -184,6 +185,5 @@ class retrovirus:
     #Complete
 #Terminate
 
-if __name__ == '__main__':
-    retrovirus()
+retrovirus()
 #Terminate
