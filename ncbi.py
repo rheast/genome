@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 #pip install beautifulsoup4
 import json,math,re,os
+from concurrent.futures import ProcessPoolExecutor
 from urllib.request import urlopen, urlretrieve
 from bs4 import BeautifulSoup
 
@@ -15,7 +16,7 @@ report = {
     'genbank': 'gb'
 }
 
-for name in data:
+def getNuccore(name):
     html = urlopen(ncbi+'/nuccore/'+name)
     html = BeautifulSoup(html.read(),'html.parser')
     id = html.find('meta',{'name':'ncbi_uidlist'})['content']
@@ -25,3 +26,7 @@ for name in data:
         b = path+name+'.'+report[rep]
         urlretrieve(a,b)
         print(name,a,b)
+
+if __name__ == '__main__':
+    for i in data:
+        ProcessPoolExecutor().submit(getNuccore,i)
