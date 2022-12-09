@@ -28,5 +28,7 @@ def getNuccore(name):
         print(name,a,b)
 
 if __name__ == '__main__':
+    pro = ProcessPoolExecutor()
     for i in data:
-        ProcessPoolExecutor().submit(getNuccore,i)
+        pro.submit(getNuccore,i)
+    pro.shutdown()
