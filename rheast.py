@@ -1,6 +1,9 @@
 #!/usr/bin/python3
+#pip install beautifulsoup4
+from urllib.request import urlopen, urlretrieve
 from operator import itemgetter
-import re,os
+from bs4 import BeautifulSoup
+import os, re
 
 class RHEast:
     """ ARRAY """
@@ -15,10 +18,15 @@ class RHEast:
     #Complete
 
     def getArrayPackage(self,array,number,*delete): # -> "delete: False or True|whatever, default: False":
+        if delete:
+            delete = delete[0]
+        
         array = [array[i:i+number] for i in range(0,len(array),number)]
+
         if delete:
             if len(array[-1]) < number and len(array) > 1:
                 del array[-1]
+        
         return array
     #Complete
 
@@ -296,11 +304,90 @@ class RHEast:
         return
     #Complete
 
+    def getSraExtend(self,*array):
+        robot = []
+
+        for i in range(100):
+            num = int(array[0].replace('SRR','')) + i
+            num = 'SRR'+str(num)
+            robot.append(num)
+
+            if num == array[1]:
+                break
+
+        print(len(robot),robot)
+        return robot
+    #Complete
+
+    def ncbiNuccore(self,path,ncbi,name):
+        report = {
+            'fasta': 'fasta',
+            'genbank': 'gb'
+        }
+
+        html = urlopen(ncbi+'nuccore/'+name)
+        html = BeautifulSoup(html.read(),'html.parser')
+        id = html.find('meta',{'name':'ncbi_uidlist'})['content']
+
+        for rep in report:
+            a = ncbi+'sviewer/viewer.cgi?save=file&report='+rep+'&id='+id
+            b = path+name+'.'+report[rep]
+
+            if os.path.exists(b):
+                print(True)
+                continue
+
+            try:
+                urlretrieve(a,b+'.tmp')
+            except Exception as error:
+                print(name,error)
+            else:
+                os.rename(b+'.tmp',b)
+                print(name,a,b)
+        return
+    #Complete
+
+    def ncbiSra(self,path,ncbi,name,suffix):
+        a = ncbi+name+suffix
+        b = path
+
+        for i in ['\\sra\\',name+'\\']:
+            b += i
+            rheast.createPath(b)
+        
+        b += name
+        if os.path.exists(b+'.sra'):
+            return
+        
+        try:
+            urlretrieve(a,b+'.tmp')
+        except Exception as error:
+            print(name,error)
+        else:
+            os.rename(b+'.tmp',b+'.sra')
+            print(name,True)
+        return
+    #Complete
+    
+    def ncbiFastqDump(self,tool,item,output):
+        if os.path.exists(item.replace('sra','seq')+'.fastq'):
+            return
+
+        os.system(tool+' '+item+' --outdir '+output)
+        return
+    #Complete
+
     """ SEQUENCE """
-    def getSeqCompress(self,sequence): # -> "return: [1|number,N|string]":
+    def getSeqCompress(self,sequence,*mini): # -> "return: [1|number,N|string]":
         if len(sequence) < 2:
             return sequence
         
+        if mini:
+            mini = mini[0]
+        
+        if not mini:
+            mini = 2
+
         #Get Repeat Times
         robot = {}
         for seq in sequence:
@@ -339,7 +426,7 @@ class RHEast:
         robot = self.getArraySorted(robot)
 
         for r, rob in enumerate(robot):
-            if rob[0] < 2:
+            if rob[0] < mini:
                 robot = robot[0:r]
                 break
         
@@ -452,6 +539,31 @@ class RHEast:
         return robot
     #Complete
 
+    def getSeqTwin(self,sequence,hunt):
+        robot = []
+
+        for i in range(len(sequence)):
+            seq = sequence[i:i+hunt]
+            arr = re.findall(seq,sequence)
+
+            if len(seq) < hunt:
+                break
+
+            if len(arr) > 1:
+                if robot and robot[-1][1] == i+hunt-1:
+                    txt = robot[-1][2] + seq[-1]
+                    arr = re.findall(txt,sequence)
+
+                    if len(arr) > 1:
+                        robot[-1][1] = i+hunt
+                        robot[-1][2] = txt
+                        continue
+
+                robot.append([i+1,i+hunt,seq])
+        
+        return robot
+    #Complete
+
     def getSeqSimilar(self,hunt,*array):
         if type(array[0]) == type([]):
             array = array[0]
@@ -558,11 +670,8 @@ class RHEast:
     #Complete
 
     def getSeqSplit(self,sequence,hunt):
-        prog = []
-        for i in range(hunt):
-            prog.append(10000*i)
-
         robot = []
+
         for s, seq in enumerate(sequence):
             arr = []
             txt = seq[1]
@@ -583,8 +692,8 @@ class RHEast:
             for a in arr:
                 robot.append([seq[0],a])
             
-            if s in prog:
-                print(s,arr)
+            if str(s)[::-1][0:3] == '000':
+                print(str(int(s/len(sequence)*100))+'%')
         
         robot = self.getSeqCompress(robot)
         return robot
@@ -603,7 +712,6 @@ class RHEast:
             
             if robot:
                 break
-        
         return robot
     #Complete
 
@@ -675,7 +783,7 @@ class RHEast:
         sequence = mould
 
         for side in range(2):
-            for i in range(128):
+            for i in range(1024):
                 mould = sequence[::1-side*2][0:hunt][::1-side*2]
                 extend = self.getSeqExtend(hunt,array,mould,side,data)
 
@@ -687,6 +795,8 @@ class RHEast:
                     sequence = [sequence,extend][::side*2-1]
                     sequence = sequence[0] + sequence[1]
                     print(i,extend)
+                    if data:
+                        self.writeData(data,[str(i)+' '+extend,'\n'])
                 else:
                     print(i,False)
                 
@@ -732,7 +842,7 @@ class RHEast:
             major = self.getSeqOverlay(sequence,side)
                     
         if data:
-            self.writeData(data,sequence[0:100]+['',major,'\n'])
+            self.writeData(data,sequence[0:100])
 
         return major
     #Complete
@@ -970,6 +1080,6 @@ class RHEast:
             number = -1
         return number
     #Complete
+#Terminate
 
 rheast = RHEast()
-#Terminate

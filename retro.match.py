@@ -1,39 +1,25 @@
 #!/usr/bin/python3
 #pip install matplotlib
-from rheast import rheast
 import matplotlib.pyplot as pyplot
+from rheast import rheast
 
 class retrovirus:
-    def __init__(self,*index):
-        #Create Data Path
-        self.run = rheast.locatePath()+'\\run\\'
-        self.seq = rheast.locatePath()+'\\seq\\'
-        
-        for p in [self.run,self.seq]:
+    def __init__(self):
+        for i in ['run', 'seq']:
+            p = rheast.locatePath()+'\\'+i+'\\'
             rheast.createPath(p)
+            setattr(self,i,p)
         
-        #Start Program
-        process = [
-            #self.runSrrCompress,
-            #self.runSrrToNc,
-            self.runCodonMatch,
-        ]
-
-        index = []
-        for i, pro in enumerate(process):
-            if len(index) == 0 or i in index:
-                print('Process:',i)
-                pro()
+        self.runCodonMatch()
         return
     #Complete
 
     def runCodonMatch(self):
-        rheast.writeData(self.run+'data.dat',[],'w')
+        rheast.writeData(self.run+'retro.figure.dat',[],'w')
         pyplot.rcParams['font.sans-serif'] = 'Times New Roman'
         figure = pyplot.figure(figsize=(32,6))
 
         hunt = 3
-
         image = {
             'color': ['#ee6677', '#eccd00', '#3399ff', '#00c800'],
             'shape': ['s', 'o'],
@@ -74,7 +60,7 @@ class retrovirus:
                 match = sequence[bind[0]-1:bind[1]]
                 
                 robot = rheast.getCodonExtract(hunt,match,protein,sequence,data[d][nc])
-                rheast.writeData(self.run+'data.dat',['>'+nc,match,'\n\n'])
+                rheast.writeData(self.run+'retro.figure.dat',['>'+nc,match,'\n\n'])
                 
                 title.append(nc + rheast.none[' '][0:3] + data[d][nc]['type'])
                 bidden.append(robot)
@@ -97,7 +83,7 @@ class retrovirus:
                     if len(number[y][x]) < len(data[d]):
                         number[y][x] = False
             
-            rheast.writeData(self.run+'data.dat',['',number,'\n'])
+            rheast.writeData(self.run+'retro.figure.dat',['',number,'\n'])
 
             for i, robot in enumerate(bidden):
                 array = {
@@ -116,7 +102,7 @@ class retrovirus:
                         robot[r] = {}
 
                 bidden[i] = rheast.getArrayClean(robot)
-                rheast.writeData(self.run+'data.dat',[title[i].split(' ')[0]]+bidden[i]+['\n'])
+                rheast.writeData(self.run+'retro.figure.dat',[title[i].split(' ')[0]]+bidden[i]+['\n'])
 
                 pyplot.scatter(
                     array['x'], array['y'],
@@ -152,38 +138,9 @@ class retrovirus:
         gca.yaxis.set_ticks_position('left')
         gca.spines['bottom'].set_position(('data', 0))
         gca.spines['left'].set_position(('data', 0))
-        figure.savefig(self.run+'figure'+'.svg')
-        
-        return
-    #Complete
-
-    def runSrrToNc(self):
-        robot = rheast.getPathList(self.seq,'NC_001802.1')[0]
-        robot = rheast.getFileSequence(robot)
-
-        sequence = rheast.getPathList(self.run,'SRR*******.compress')[0]
-        sequence = rheast.getFile(sequence)
-
-        hunt = 32
-        data = self.run+'SRR*******.data.dat'
-        rheast.writeData(data,[],'w')
-
-        bidden = rheast.getSeqMould(hunt,sequence,robot)
-        bidden = rheast.getSeqSplice(hunt,sequence,bidden,data)
-        bidden = rheast.getSeqArrange(hunt,bidden,robot)
-        rheast.writeData(self.run+'SRR*******.1.fasta',['>SRR*******.1',bidden],'w')
-        return
-    #Complete
-
-    def runSrrCompress(self):
-        sequence = rheast.getPathList(self.seq,'SRR*******.1.fastq')[0]
-        sequence = rheast.getFileSequence(sequence)
-        sequence = rheast.getSeqCompress(sequence)
-        sequence = rheast.getSeqSplit(sequence,32)
-        rheast.writeData(self.run+'SRR*******.compress.dat',sequence,'w')
+        figure.savefig(self.run+'retro.figure.svg')
         return
     #Complete
 #Terminate
 
 retrovirus()
-#Terminate
