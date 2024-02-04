@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 #pip install matplotlib
+import time, sys
+sys.dont_write_bytecode = True
 import matplotlib.pyplot as pyplot
 from rheast import rheast
 
@@ -10,6 +12,7 @@ class retrovirus:
             rheast.createPath(p)
             setattr(self,i,p)
         
+        self.time = time.time()
         self.runCodonMatch()
         return
     #Complete
@@ -17,7 +20,7 @@ class retrovirus:
     def runCodonMatch(self):
         rheast.writeData(self.run+'retro.figure.dat',[],'w')
         pyplot.rcParams['font.sans-serif'] = 'Times New Roman'
-        figure = pyplot.figure(figsize=(32,6))
+        figure = pyplot.figure(figsize=(16,5))
 
         hunt = 3
         image = {
@@ -27,14 +30,14 @@ class retrovirus:
 
         data = {
             'HTLV': {
-                'NC_001436': {'type': 'HTLV1', 'bind': [406, 423]},
-                'NC_001488': {'type': 'HTLV2', 'bind': [766, 783]},
-                'NC_000858': {'type': 'STLV1', 'bind': [758, 775]},
-                'NC_001815': {'type': 'STLV2', 'bind': [715, 732]},
+                'NC_001436': {'type': 'HTLV-1', 'bind': [406, 423]},
+                'NC_001488': {'type': 'HTLV-2', 'bind': [766, 783]},
+                'NC_000858': {'type': 'STLV-1', 'bind': [758, 775]},
+                'NC_001815': {'type': 'STLV-2', 'bind': [715, 732]},
             },
             'HIV': {
-                'NC_001802': {'type': 'HIV1', 'bind': [182, 199]},
-                'NC_001722': {'type': 'HIV2', 'bind': [859, 876]},
+                'NC_001802': {'type': 'HIV-1', 'bind': [182, 199]},
+                'NC_001722': {'type': 'HIV-2', 'bind': [859, 876]},
                 'NC_001549': {'type': 'SIV',  'bind': [689, 706]},
                 'NC_001482': {'type': 'FIV',  'bind': [358, 375]},
             },
@@ -55,7 +58,6 @@ class retrovirus:
                 if not protein:
                     protein = rheast.getCodonPotential(sequence,8)
                 
-                data[d][nc]['type'] = nc + '   ' + data[d][nc]['type']
                 bind = data[d][nc]['bind']
                 match = sequence[bind[0]-1:bind[1]]
                 
@@ -108,19 +110,19 @@ class retrovirus:
                     array['x'], array['y'],
                     marker = image['shape'][n],
                     color = image['color'][i],
-                    linewidths = (len(bidden)-i-1)*2,
+                    linewidths = len(bidden)-i-1,
                 )
             
                 pyplot.scatter(
                     [], [],
                     marker = image['shape'][n],
                     color = image['color'][i],
-                    linewidths = 4,
+                    linewidths = 3,
                     label = title[i],
                 )
 
         array = {
-            'x': [500, 10000],
+            'x': [1000, 9000],
             'y': [2, 10],
         }
         array = rheast.getCodonAxis(array)
@@ -139,6 +141,9 @@ class retrovirus:
         gca.spines['bottom'].set_position(('data', 0))
         gca.spines['left'].set_position(('data', 0))
         figure.savefig(self.run+'retro.figure.svg')
+        
+        self.time = time.time() - self.time
+        print('time:',self.time,'s')
         return
     #Complete
 #Terminate
