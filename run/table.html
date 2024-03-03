@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+</head>
+
+<body>
+    <div class="box">
+        <dl>
+            <dt>
+                <p>
+                    <span class="name"></span>
+                    <span class="type"></span>
+                </p>
+            </dt>
+            <dd>
+                <p>
+                    <span class="left"></span>
+                    <span class="extend">
+                        <span class="normal">
+                            <span class="light"></span>
+                        </span>
+                    </span>
+                    <span class="right"></span>
+                </p>
+            </dd>
+        </dl>
+    </div>
+
+    <script src="retro.js"></script>
+    <script>
+        let box = document.querySelector('.box')
+        box.innerHTML = ''
+
+        function element(name) {
+            return document.createElement(name)
+        }
+
+        function addSpan(div, name, info, style) {
+            for (let i in name) {
+                let e = name[i]
+                let s = element('span')
+                s.className = e
+                if (style == 'i') {
+                    s.textContent = info[i]
+                }
+                if (style == 'e') {
+                    s.textContent = info[e]
+                }
+                div.appendChild(s)
+            }
+            return div
+        }
+
+        for (let d in data) {
+            let array = data[d]
+            for (let a in array) {
+                let arr = array[a]
+                let dl = element('dl')
+                let dt = element('dt')
+                let dd = element('dd')
+
+                if (dt) {
+                    let p = element('p')
+                    addSpan(p, ['name', 'type'], arr.info, 'e')
+                    dt.appendChild(p)
+                }
+
+                for (let r in arr.array) {
+                    let txt = arr.array[r]
+                    let p = element('p')
+                    let j = ' '.repeat(13 + arr.index.y * 1)
+                    p = addSpan(p, ['left', 'right'], txt.index, 'i')
+                    if (!txt.normal) {
+                        txt.normal = txt.light
+                    }
+                    if (!txt.extend) {
+                        txt.extend = j + txt.normal
+                    }
+                    let seq = txt.extend
+                    seq = seq.replace(txt.normal, '@' + txt.normal + '$')
+                    seq = seq.replace(txt.light, '#' + txt.light + '$')
+                    seq = seq.split('')
+                    txt = ''
+                    for (let i in seq) {
+                        txt += '<i>' + seq[i] + '</i>'
+                    }
+                    txt = txt.replace(/<i>\@<\/i>/g, '<span class="normal">')
+                    txt = txt.replace(/<i>\#<\/i>/g, '<span class="light">')
+                    txt = txt.replace(/<i>\$<\/i>/g, '</span>')
+                    let s = element('span')
+                    s.innerHTML = txt
+                    s.className = 'extend'
+                    p.appendChild(s)
+                    dd.appendChild(p)
+                }
+
+                dl.appendChild(dt)
+                dl.appendChild(dd)
+                box.appendChild(dl)
+                console.log(arr)
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        html {
+            font-size: 16px;
+            width: 70em;
+        }
+
+        .box {
+            padding: 2em;
+            font-family: 'Times New Roman', Times, serif;
+            color: #333;
+        }
+
+        dl {
+            width: 100%;
+            position: relative;
+        }
+
+        dt {
+            position: absolute;
+        }
+
+        dd {
+            width: 80%;
+            margin-left: 20%;
+            position: relative;
+        }
+
+        .left,
+        .right {
+            position: absolute;
+            top: 0;
+        }
+
+        .left {
+            left: 0;
+            text-align: right;
+        }
+
+        .right {
+            right: 0;
+        }
+
+        .extend {
+            font-family: 'Consolas';
+            width: 29.25em;
+            display: block;
+            margin: 0 auto;
+            color: #ccc;
+            position: relative;
+        }
+
+        .normal {
+            color: #333;
+            position: relative;
+        }
+
+        .light {
+            color: blue;
+            position: relative;
+        }
+
+        .name {
+            margin-right: 1em;
+        }
+
+        dd span {
+            min-width: 4em;
+        }
+
+        dd i {
+            font-style: normal;
+            width: 0.75em;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        dd p {
+            display: block;
+            position: relative;
+        }
+
+        dd p+p {
+            margin-top: 0.75em;
+        }
+
+        dd p:nth-child(2) .normal::before {
+            content: " ";
+            width: 4em;
+            height: 1.2em;
+            position: absolute;
+            right: 100%;
+            margin-right: 1.75em;
+            background-image: url('reverse.svg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+
+        dd p:nth-child(3) .extend i {
+            width: 2.25em;
+        }
+
+        dl+dl {
+            margin-top: 2em;
+        }
+    </style>
+</body>
+
+</html>
