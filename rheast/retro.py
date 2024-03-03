@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from turtle import title
 from .rheast import rheast
 import numpy
 import re
