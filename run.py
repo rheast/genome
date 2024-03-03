@@ -106,7 +106,7 @@ if __name__ == '__main__':
             {'name': 'NC_001482', 'type': 'FIV',   'bind': [358, 375]},
         ],
     ]
-    analyze.sra = [f'SRR{i}' for i in list(range(5513579, 5513615))][0:2]
+    analyze.sra = [f'SRR{i}' for i in list(range(5513579, 5513615))]
     retro.image = {
         'color': ['#ee6677', '#eccd00', '#3399ff', '#00c800'],
         'marker': ['s', 'o'],
